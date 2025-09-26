@@ -93,7 +93,7 @@ Any special considerations or platform-specific notes.
 
 ```bash
 # Clone your fork
-git clone https://github.com/yourusername/packages
+git clone https://github.com/n-ae/packages
 cd packages
 
 # Test Homebrew formulae

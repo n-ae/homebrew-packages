@@ -1,8 +1,8 @@
 class Rgcidr < Formula
   desc "High-performance Zig library and CLI tool for filtering IPv4 and IPv6 addresses against CIDR patterns"
-  homepage "https://github.com/yourusername/rgcidr"
-  url "https://github.com/yourusername/rgcidr/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "SHA256_HASH_TO_BE_UPDATED"
+  homepage "https://github.com/n-ae/rgcidr"
+  url "https://github.com/n-ae/rgcidr/archive/refs/tags/v0.1.3.tar.gz"
+  sha256 "254d4ac6e5848d93f917d772e535a0fc184ddf1f2e492bffc795b2451fa3e233"
   license "MIT"
   
   depends_on "zig" => :build

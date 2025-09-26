@@ -1,7 +1,7 @@
 {
     "version": "0.1.0",
     "description": "High-performance Zig library and CLI tool for filtering IPv4 and IPv6 addresses against CIDR patterns",
-    "homepage": "https://github.com/yourusername/rgcidr",
+    "homepage": "https://github.com/n-ae/rgcidr",
     "license": "MIT",
     "notes": [
         "rgcidr filters IP addresses against CIDR patterns",
@@ -11,14 +11,14 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/yourusername/rgcidr/releases/download/v0.1.0/rgcidr-windows-x86_64.exe",
+            "url": "https://github.com/n-ae/rgcidr/releases/download/v0.1.0/rgcidr-windows-x86_64.exe",
             "hash": "SHA256_HASH_TO_BE_UPDATED",
             "bin": [
                 ["rgcidr-windows-x86_64.exe", "rgcidr"]
             ]
         },
         "32bit": {
-            "url": "https://github.com/yourusername/rgcidr/releases/download/v0.1.0/rgcidr-windows-i386.exe",
+            "url": "https://github.com/n-ae/rgcidr/releases/download/v0.1.0/rgcidr-windows-i386.exe",
             "hash": "SHA256_HASH_TO_BE_UPDATED",
             "bin": [
                 ["rgcidr-windows-i386.exe", "rgcidr"]
@@ -26,21 +26,21 @@
         }
     },
     "checkver": {
-        "github": "https://github.com/yourusername/rgcidr"
+        "github": "https://github.com/n-ae/rgcidr"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/yourusername/rgcidr/releases/download/v$version/rgcidr-windows-x86_64.exe",
+                "url": "https://github.com/n-ae/rgcidr/releases/download/v$version/rgcidr-windows-x86_64.exe",
                 "hash": {
-                    "url": "https://github.com/yourusername/rgcidr/releases/download/v$version/checksums.txt",
+                    "url": "https://github.com/n-ae/rgcidr/releases/download/v$version/checksums.txt",
                     "regex": "([a-fA-F0-9]{64})\\s+rgcidr-windows-x86_64.exe"
                 }
             },
             "32bit": {
-                "url": "https://github.com/yourusername/rgcidr/releases/download/v$version/rgcidr-windows-i386.exe",
+                "url": "https://github.com/n-ae/rgcidr/releases/download/v$version/rgcidr-windows-i386.exe",
                 "hash": {
-                    "url": "https://github.com/yourusername/rgcidr/releases/download/v$version/checksums.txt",
+                    "url": "https://github.com/n-ae/rgcidr/releases/download/v$version/checksums.txt",
                     "regex": "([a-fA-F0-9]{64})\\s+rgcidr-windows-i386.exe"
                 }
             }

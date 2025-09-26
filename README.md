@@ -6,13 +6,13 @@ Cross-platform CLI tools available on both Homebrew (macOS/Linux) and Scoop (Win
 
 ### macOS/Linux (Homebrew)
 ```bash
-brew tap yourusername/packages
+brew tap n-ae/packages
 brew install rgcidr
 ```
 
 ### Windows (Scoop) 
 ```powershell
-scoop bucket add packages https://github.com/yourusername/packages
+scoop bucket add packages https://github.com/n-ae/packages
 scoop install rgcidr
 ```
 

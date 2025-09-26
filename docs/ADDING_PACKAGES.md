@@ -19,8 +19,8 @@ Create `homebrew/Formula/<package-name>.rb`:
 ```ruby
 class PackageName < Formula
   desc "Brief description of the package"
-  homepage "https://github.com/yourusername/package-name"
-  url "https://github.com/yourusername/package-name/archive/refs/tags/v1.0.0.tar.gz"
+  homepage "https://github.com/n-ae/package-name"
+  url "https://github.com/n-ae/package-name/archive/refs/tags/v1.0.0.tar.gz"
   sha256 "SHA256_HASH_OF_SOURCE_TARBALL"
   license "MIT"
   
@@ -48,11 +48,11 @@ Create `scoop/bucket/<package-name>.json`:
 {
     "version": "1.0.0",
     "description": "Brief description of the package",
-    "homepage": "https://github.com/yourusername/package-name",
+    "homepage": "https://github.com/n-ae/package-name",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/yourusername/package-name/releases/download/v1.0.0/package-name-windows-x86_64.exe",
+            "url": "https://github.com/n-ae/package-name/releases/download/v1.0.0/package-name-windows-x86_64.exe",
             "hash": "SHA256_HASH_OF_WINDOWS_BINARY",
             "bin": [
                 ["package-name-windows-x86_64.exe", "package-name"]
@@ -60,12 +60,12 @@ Create `scoop/bucket/<package-name>.json`:
         }
     },
     "checkver": {
-        "github": "https://github.com/yourusername/package-name"
+        "github": "https://github.com/n-ae/package-name"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/yourusername/package-name/releases/download/v$version/package-name-windows-x86_64.exe"
+                "url": "https://github.com/n-ae/package-name/releases/download/v$version/package-name-windows-x86_64.exe"
             }
         }
     }
@@ -76,13 +76,13 @@ Create `scoop/bucket/<package-name>.json`:
 
 ### For Homebrew (source tarball):
 ```bash
-curl -L -o package.tar.gz https://github.com/yourusername/package-name/archive/refs/tags/v1.0.0.tar.gz
+curl -L -o package.tar.gz https://github.com/n-ae/package-name/archive/refs/tags/v1.0.0.tar.gz
 shasum -a 256 package.tar.gz
 ```
 
 ### For Scoop (Windows binary):
 ```bash
-curl -L -o package.exe https://github.com/yourusername/package-name/releases/download/v1.0.0/package-name-windows-x86_64.exe
+curl -L -o package.exe https://github.com/n-ae/package-name/releases/download/v1.0.0/package-name-windows-x86_64.exe
 shasum -a 256 package.exe
 ```
 
