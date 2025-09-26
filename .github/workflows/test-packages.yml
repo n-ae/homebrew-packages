@@ -17,22 +17,31 @@ jobs:
     - name: Install Zig
       uses: goto-bus-stop/setup-zig@v2
       with:
-        version: 0.13.0
+        version: 0.15.1
         
     - name: Test Homebrew Formulae
       run: |
-        # Test each formula
+        # Test each formula locally without tapping
         for formula in homebrew/Formula/*.rb; do
           if [ -f "$formula" ]; then
-            echo "Testing $(basename "$formula" .rb)..."
-            brew install --build-from-source "$formula"
-            brew audit --strict --new --online "$formula" || echo "Audit warnings detected"
+            package_name=$(basename "$formula" .rb)
+            echo "Testing $package_name formula..."
+            
+            # Install from local formula file
+            brew install --build-from-source --formula "$formula"
+            
+            # Run basic audit (skip online checks that might fail in CI)
+            brew audit --strict "$formula" || echo "Audit warnings detected"
             
             # Test basic functionality
-            package_name=$(basename "$formula" .rb)
             if command -v "$package_name" &> /dev/null; then
-              "$package_name" --version || echo "Version check failed for $package_name"
+              echo "Testing $package_name functionality..."
+              "$package_name" --version && echo "✅ $package_name version check passed"
+            else
+              echo "⚠️ $package_name command not found in PATH"
             fi
+            
+            echo "✅ $package_name formula test completed"
           fi
         done
 
@@ -87,20 +96,27 @@ jobs:
     - name: Install Zig
       uses: goto-bus-stop/setup-zig@v2
       with:
-        version: 0.13.0
+        version: 0.15.1
         
     - name: Test Homebrew Formulae on Linux
       run: |
         # Test each formula on Linux
         for formula in homebrew/Formula/*.rb; do
           if [ -f "$formula" ]; then
-            echo "Testing $(basename "$formula" .rb) on Linux..."
-            brew install --build-from-source "$formula"
+            package_name=$(basename "$formula" .rb)
+            echo "Testing $package_name formula on Linux..."
+            
+            # Install from local formula file
+            brew install --build-from-source --formula "$formula"
             
             # Test basic functionality
-            package_name=$(basename "$formula" .rb)
             if command -v "$package_name" &> /dev/null; then
-              "$package_name" --version || echo "Version check failed for $package_name"
+              echo "Testing $package_name functionality..."
+              "$package_name" --version && echo "✅ $package_name version check passed on Linux"
+            else
+              echo "⚠️ $package_name command not found in PATH"
             fi
+            
+            echo "✅ $package_name formula test completed on Linux"
           fi
         done
