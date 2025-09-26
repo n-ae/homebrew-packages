@@ -1,0 +1,84 @@
+name: Release Packages
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g., v0.1.0)'
+        required: true
+
+jobs:
+  auto-update:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    steps:
+    - name: Extract package info from release
+      id: extract
+      run: |
+        if [ "${{ github.event_name }}" = "release" ]; then
+          tag_name="${{ github.event.release.tag_name }}"
+          repo_name="${{ github.event.release.repository.name }}"
+        else
+          tag_name="${{ github.event.inputs.release_tag }}"
+          repo_name="rgcidr"  # Default for manual dispatch
+        fi
+        
+        # Extract version (remove 'v' prefix if present)
+        version=$(echo "$tag_name" | sed 's/^v//')
+        
+        echo "package=$repo_name" >> $GITHUB_OUTPUT
+        echo "version=$version" >> $GITHUB_OUTPUT
+        echo "tag=$tag_name" >> $GITHUB_OUTPUT
+        
+    - name: Trigger package updates
+      uses: peter-evans/repository-dispatch@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        event-type: update-packages
+        client-payload: |
+          {
+            "package": "${{ steps.extract.outputs.package }}",
+            "version": "${{ steps.extract.outputs.version }}",
+            "tag": "${{ steps.extract.outputs.tag }}"
+          }
+
+  validate-release:
+    runs-on: ubuntu-latest
+    needs: auto-update
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Wait for updates
+      run: |
+        echo "Waiting for package updates to complete..."
+        sleep 30
+        
+    - name: Validate updated packages
+      run: |
+        package="${{ needs.auto-update.outputs.package || 'rgcidr' }}"
+        version="${{ needs.auto-update.outputs.version }}"
+        
+        echo "Validating $package v$version packages..."
+        
+        # Check if Homebrew formula was updated
+        if [ -f "homebrew/Formula/${package}.rb" ]; then
+          if grep -q "v$version" "homebrew/Formula/${package}.rb"; then
+            echo "✅ Homebrew formula updated"
+          else
+            echo "❌ Homebrew formula not updated"
+            exit 1
+          fi
+        fi
+        
+        # Check if Scoop manifest was updated
+        if [ -f "scoop/bucket/${package}.json" ]; then
+          if grep -q "\"$version\"" "scoop/bucket/${package}.json"; then
+            echo "✅ Scoop manifest updated"
+          else
+            echo "❌ Scoop manifest not updated"
+            exit 1
+          fi
+        fi

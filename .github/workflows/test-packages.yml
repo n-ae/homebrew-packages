@@ -1,0 +1,106 @@
+name: Test Packages
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-homebrew:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Install Zig
+      uses: goto-bus-stop/setup-zig@v2
+      with:
+        version: 0.13.0
+        
+    - name: Test Homebrew Formulae
+      run: |
+        # Test each formula
+        for formula in homebrew/Formula/*.rb; do
+          if [ -f "$formula" ]; then
+            echo "Testing $(basename "$formula" .rb)..."
+            brew install --build-from-source "$formula"
+            brew audit --strict --new --online "$formula" || echo "Audit warnings detected"
+            
+            # Test basic functionality
+            package_name=$(basename "$formula" .rb)
+            if command -v "$package_name" &> /dev/null; then
+              "$package_name" --version || echo "Version check failed for $package_name"
+            fi
+          fi
+        done
+
+  test-scoop:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Install Scoop
+      run: |
+        Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+        iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
+        
+    - name: Test Scoop Manifests
+      run: |
+        # Test each manifest
+        Get-ChildItem scoop\bucket\*.json | ForEach-Object {
+          $manifestPath = $_.FullName
+          $packageName = $_.BaseName
+          
+          Write-Host "Testing $packageName..."
+          
+          try {
+            # Install package from local manifest
+            scoop install $manifestPath
+            
+            # Test basic functionality
+            if (Get-Command $packageName -ErrorAction SilentlyContinue) {
+              & $packageName --version
+            }
+            
+            Write-Host "✅ $packageName test passed"
+          } catch {
+            Write-Error "❌ $packageName test failed: $_"
+            exit 1
+          }
+        }
+
+  test-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Install dependencies
+      run: |
+        # Install Homebrew on Linux
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        echo "/home/linuxbrew/.linuxbrew/bin" >> $GITHUB_PATH
+        
+    - name: Install Zig
+      uses: goto-bus-stop/setup-zig@v2
+      with:
+        version: 0.13.0
+        
+    - name: Test Homebrew Formulae on Linux
+      run: |
+        # Test each formula on Linux
+        for formula in homebrew/Formula/*.rb; do
+          if [ -f "$formula" ]; then
+            echo "Testing $(basename "$formula" .rb) on Linux..."
+            brew install --build-from-source "$formula"
+            
+            # Test basic functionality
+            package_name=$(basename "$formula" .rb)
+            if command -v "$package_name" &> /dev/null; then
+              "$package_name" --version || echo "Version check failed for $package_name"
+            fi
+          fi
+        done

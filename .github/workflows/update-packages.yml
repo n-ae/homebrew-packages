@@ -1,0 +1,107 @@
+name: Update Packages
+
+on:
+  repository_dispatch:
+    types: [update-packages]
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to update (or "all")'
+        required: true
+        default: 'rgcidr'
+      version:
+        description: 'New version'
+        required: true
+        default: '0.1.0'
+
+jobs:
+  update-homebrew:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Install Zig
+      uses: goto-bus-stop/setup-zig@v2
+      with:
+        version: 0.13.0
+        
+    - name: Update Homebrew formulae
+      run: |
+        package="${{ github.event.inputs.package || github.event.client_payload.package }}"
+        version="${{ github.event.inputs.version || github.event.client_payload.version }}"
+        
+        echo "Updating Homebrew formula: $package to $version"
+        ./scripts/homebrew/update-formulae.sh "$package" "$version"
+        
+    - name: Test updated formula
+      run: |
+        package="${{ github.event.inputs.package || github.event.client_payload.package }}"
+        
+        if [ -f "homebrew/Formula/${package}.rb" ]; then
+          echo "Testing updated formula..."
+          brew install --build-from-source "homebrew/Formula/${package}.rb"
+          brew audit --strict --new --online "homebrew/Formula/${package}.rb" || echo "Audit warnings detected"
+          
+          if command -v "$package" &> /dev/null; then
+            "$package" --version
+          fi
+        fi
+        
+    - name: Commit Homebrew changes
+      run: |
+        package="${{ github.event.inputs.package || github.event.client_payload.package }}"
+        version="${{ github.event.inputs.version || github.event.client_payload.version }}"
+        
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add homebrew/
+        git commit -m "Update Homebrew formula: $package v$version" || exit 0
+        git push
+
+  update-scoop:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Update Scoop manifests
+      run: |
+        $package = "${{ github.event.inputs.package || github.event.client_payload.package }}"
+        $version = "${{ github.event.inputs.version || github.event.client_payload.version }}"
+        
+        Write-Host "Updating Scoop manifest: $package to $version"
+        .\scripts\scoop\update-manifests.ps1 -Package $package -Version $version
+        
+    - name: Install Scoop
+      run: |
+        Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+        iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
+        
+    - name: Test updated manifest
+      run: |
+        $package = "${{ github.event.inputs.package || github.event.client_payload.package }}"
+        
+        if (Test-Path "scoop\bucket\$package.json") {
+          Write-Host "Testing updated manifest..."
+          scoop install ".\scoop\bucket\$package.json"
+          
+          if (Get-Command $package -ErrorAction SilentlyContinue) {
+            & $package --version
+          }
+        }
+        
+    - name: Commit Scoop changes
+      run: |
+        $package = "${{ github.event.inputs.package || github.event.client_payload.package }}"
+        $version = "${{ github.event.inputs.version || github.event.client_payload.version }}"
+        
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add scoop/
+        git commit -m "Update Scoop manifest: $package v$version"
+        git push
