@@ -2,6 +2,8 @@
 
 Cross-platform CLI tools available on both Homebrew (macOS/Linux) and Scoop (Windows).
 
+> **📖 Public Repository**: This is a public package repository. All packages reference open-source projects with verified checksums. See our [Security Policy](.github/SECURITY.md) for details.
+
 ## 🚀 Quick Installation
 
 ### macOS/Linux (Homebrew)

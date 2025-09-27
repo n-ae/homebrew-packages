@@ -1,6 +1,8 @@
 # Contributing Guide
 
-Thank you for your interest in contributing to our package repository!
+Thank you for your interest in contributing to our public package repository!
+
+**🔒 Security Notice**: This is a public repository. Please review our [Security Policy](../.github/SECURITY.md) before contributing.
 
 ## Ways to Contribute
 
@@ -140,11 +142,30 @@ All contributions are automatically tested via GitHub Actions:
 3. **Testing phase** on all supported platforms  
 4. **Merge and deploy** after successful validation
 
+## Security Guidelines
+
+**🔒 Important**: This is a public repository. Follow these security practices:
+
+### ✅ **Do:**
+- Verify SHA256 hashes against official releases
+- Use HTTPS URLs for all downloads
+- Reference only official, maintained repositories
+- Test packages in isolated environments
+- Report security issues privately (see [Security Policy](../.github/SECURITY.md))
+
+### ❌ **Never:**
+- Commit API keys, tokens, or secrets
+- Include personal credentials or paths
+- Reference private or internal repositories
+- Use unverified download URLs
+- Hardcode sensitive configuration
+
 ## Communication
 
 - **Issues**: Report bugs and feature requests
 - **Discussions**: Ask questions and share ideas
 - **Pull Requests**: Submit contributions with detailed descriptions
+- **Security**: Follow our [Security Policy](../.github/SECURITY.md) for vulnerabilities
 
 ## Getting Help
 

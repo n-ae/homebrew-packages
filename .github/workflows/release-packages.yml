@@ -9,6 +9,10 @@ on:
         description: 'Release tag (e.g., v0.1.0)'
         required: true
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   auto-update:
     runs-on: ubuntu-latest
