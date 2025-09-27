@@ -44,7 +44,7 @@ Test your installation:
 
 ```bash
 # Check version
-rgcidr --version
+rgcidr -V
 
 # Test basic functionality
 echo "192.168.1.1" | rgcidr "192.168.0.0/16"
